@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react"
 import { useState } from "react"
 
-const SECONDS_BEFORE_STARTING = 10 // in microseconds
+const SECONDS_BEFORE_STARTING = 4 // in microseconds
 
 const formatStopwatch = (time: number) => {
   const minute: number = Math.floor(time / 6000)
@@ -35,6 +35,17 @@ const getBgColor = (isTimerRunning: boolean, falseStartTimer: number) => {
     return "red.500"
   }
   return "white"
+}
+
+const getColor = (isTimerRunning: boolean, falseStartTimer: number) => {
+  if (isTimerRunning || falseStartTimer >= SECONDS_BEFORE_STARTING) {
+    return "white"
+  }
+
+  if (falseStartTimer > 0 && falseStartTimer < SECONDS_BEFORE_STARTING) {
+    return "white"
+  }
+  return "black"
 }
 
 function RubikCubeTimer() {
@@ -82,13 +93,13 @@ function RubikCubeTimer() {
   const onUp = () => {
     if (isTimerRunning) {
       timer(false)
-      setFalseStartTimer(0)
     } else if (falseStartTimer > SECONDS_BEFORE_STARTING) {
       timer(true)
       setCurrentTimer(0)
     }
 
     clearInterval(falseStartIntervalId)
+    setFalseStartTimer(0)
   }
 
   return (
@@ -101,7 +112,7 @@ function RubikCubeTimer() {
     >
       <Flex justifyContent="center" alignItems="center" w="full" h="full">
         <Flex flexDir="column" gap={4}>
-          <Text fontSize="106px" fontFamily="mono" color={isTimerRunning ? "white" : "black"}>
+          <Text fontSize="106px" fontFamily="mono" color={getColor(isTimerRunning, falseStartTimer)} userSelect="none">
             {formatStopwatch(currentTimer)}
           </Text>
         </Flex>
